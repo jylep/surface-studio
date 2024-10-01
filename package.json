@@ -4,7 +4,8 @@
   "description": "A GeoJSON based web application to manipulate and compare surfaces",
   "main": "index.js",
   "scripts": {
-    "dev": "webpack serve --config ./webpack/webpack.dev.ts"
+    "dev": "webpack serve --config ./webpack/webpack.dev.ts",
+    "build": "webpack build --config ./webpack/webpack.prod.ts"
   },
   "author": "",
   "license": "ISC",

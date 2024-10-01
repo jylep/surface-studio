@@ -10,7 +10,7 @@
     "noImplicitReturns": true,
     "alwaysStrict": true,
     "esModuleInterop": true,
-    "declaration": true,
+    "declaration": false,
     "jsx": "react",
     "module": "ESNext",
     "moduleResolution": "node",

@@ -1,1 +1,5 @@
-// TODO: once everything in place finalize the prod bundle
+import config from "./webpack.dev";
+
+config.mode = "production";
+
+export default config;
