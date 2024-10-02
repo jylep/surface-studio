@@ -21,3 +21,4 @@ jobs:
           repoToken: ${{ secrets.GITHUB_TOKEN }}
           firebaseServiceAccount: ${{ secrets.FIREBASE_SERVICE_ACCOUNT_SURFACE_STUDIO_879BC }}
           projectId: surface-studio-879bc
+          channelId: live
