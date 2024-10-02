@@ -15,7 +15,10 @@ const config: Configuration = {
   },
   module: {
     rules: [
-      { test: /\.(ts|tsx)$/, "exclude": /node_modules/, loader: 'ts-loader' }
+      // TS & JS files
+      { test: /\.(ts|tsx)$/, "exclude": /node_modules/, loader: 'ts-loader' },
+      // CSS / SASS files
+      { test: /\.(sa|sc|c)ss$/, use: ['style-loader', 'css-loader'] }
     ]
   },
   plugins: [new HtmlWebpackPlugin({
