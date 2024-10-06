@@ -10,6 +10,9 @@
   "author": "",
   "license": "ISC",
   "dependencies": {
+    "@turf/turf": "^7.1.0",
+    "firebase": "^10.14.0",
+    "mapbox-gl": "^3.7.0",
     "react": "^18.3.1",
     "react-dom": "^18.3.1"
   },
@@ -26,6 +29,7 @@
     ]
   },
   "devDependencies": {
+    "@types/geojson": "^7946.0.14",
     "@types/react": "^18.3.10",
     "@types/react-dom": "^18.3.0",
     "css-loader": "^7.1.2",

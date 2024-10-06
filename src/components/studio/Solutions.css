@@ -2,3 +2,13 @@
   padding: 10px;
   background: #ffffff;
 }
+
+.solution {
+  list-style: none;
+  padding: 6px 0px;
+}
+
+.solution.underlined {
+  text-decoration: underline;
+  font-weight: bold;
+}
