@@ -10,7 +10,9 @@
   "author": "",
   "license": "ISC",
   "dependencies": {
+    "@mapbox/mapbox-gl-draw": "^1.4.3",
     "@turf/turf": "^7.1.0",
+    "@types/mapbox__mapbox-gl-draw": "^1.4.8",
     "firebase": "^10.14.0",
     "mapbox-gl": "^3.7.0",
     "react": "^18.3.1",
