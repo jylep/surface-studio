@@ -1,13 +1,14 @@
 import React, { useCallback, useEffect, useRef, useState } from 'react'
-import Mapbox, { Map as MapboxMap, NavigationControl } from 'mapbox-gl';
+import Mapbox, { Map as MapboxMap } from 'mapbox-gl';
 import { Feature, FeatureCollection, Polygon } from 'geojson';
 import MapboxDraw from "@mapbox/mapbox-gl-draw";
+
+import { generateFeatureId } from '../../../utils/generatefeatureId';
+import { SurfaceStudioDrawControl } from '../../controls/SurfaceStudioDrawControl';
 
 import './Map.css';
 import 'mapbox-gl/dist/mapbox-gl.css';
 import '@mapbox/mapbox-gl-draw/dist/mapbox-gl-draw.css';
-
-export const generateFeatureId = (solutionId: string | number, featureId: string | number) => `solution-${solutionId}-feature-${featureId}`
 
 type MapProps = {
   activeSolutionIndex: number; // Currently selected solution being worked on
@@ -21,12 +22,29 @@ export const Map = ({ activeSolutionIndex, apiKey, polygons, solutions, onPolygo
   const mapContainerRef = useRef<HTMLDivElement>(null);
   const mapRef = useRef<MapboxMap>();
   const draw = useRef<MapboxDraw>(new MapboxDraw({
-    displayControlsDefault: true,
+    displayControlsDefault: false,
     controls: {
       polygon: true,
-      trash: true
+      trash: true,
     }
   }));
+  const surfaceStudioControl = useRef<SurfaceStudioDrawControl>(new SurfaceStudioDrawControl({
+    draw: draw.current,
+    buttons: [
+      {
+        on: "click",
+        title: "Union",
+        iconClassName: 'fa fa-lg fa-link',
+        action: () => alert("Need to implement union"),
+      },
+      {
+        on: "click",
+        title: "Intersect",
+        iconClassName: 'fa fa-lg fa-cut',
+        action: () => alert("Need to implement intersect"),
+      }
+    ]
+  }))
 
   const [openedPolygons, setOpenedPolygons] = useState<Record<number | string, Feature<Polygon>[]>>({});
 
@@ -93,7 +111,7 @@ export const Map = ({ activeSolutionIndex, apiKey, polygons, solutions, onPolygo
         zoom: 15,
         style: 'mapbox://styles/jlepoix/cm1wl1l2g00u901plfw864gag'
       });
-      mapRef.current.addControl(draw.current);
+      mapRef.current.addControl(surfaceStudioControl.current);
 
       mapRef.current.on('load', () => {
         // Create initial polygons
