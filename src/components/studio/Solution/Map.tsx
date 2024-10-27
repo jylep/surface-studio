@@ -144,57 +144,45 @@ export const Map = ({ activeSolutionIndex, apiKey, polygons, selectedPolygons, s
   }));
 
   // Initialize the map and set event handlers
-  useEffect(() => {
-    if (apiKey && mapContainerRef.current && !mapRef.current && polygons.length > 0) {
-      Mapbox.accessToken = apiKey;
-      mapRef.current = new MapboxMap({
-        container: mapContainerRef.current,
-        center: [2.297, 48.857],
-        zoom: 15,
-        style: 'mapbox://styles/jlepoix/cm1wl1l2g00u901plfw864gag'
-      });
-      mapRef.current.addControl(surfaceStudioControl.current);
+  if (apiKey && mapContainerRef.current && !mapRef.current && polygons.length > 0) {
+    Mapbox.accessToken = apiKey;
+    mapRef.current = new MapboxMap({
+      container: mapContainerRef.current,
+      center: [2.297, 48.857],
+      zoom: 15,
+      style: 'mapbox://styles/jlepoix/cm1wl1l2g00u901plfw864gag'
+    });
+    mapRef.current.addControl(surfaceStudioControl.current);
 
-      mapRef.current.on('load', () => {
-        // Create initial polygons
-        // Any time polygons change, either use currrent working polygons or provided polygons
-        polygons.forEach((polygon: Feature<Polygon | MultiPolygon>, index) => {
-          draw.current.add({
-            ...polygon,
-            id: generateFeatureId(activeSolutionIndex, index)
-          });
+    mapRef.current.on('load', () => {
+      // Create initial polygons
+      // Any time polygons change, either use currrent working polygons or provided polygons
+      polygons.forEach((polygon: Feature<Polygon | MultiPolygon>, index) => {
+        draw.current.add({
+          ...polygon,
+          id: generateFeatureId(activeSolutionIndex, index)
         });
-        const initialPolygons = solutions.reduce((acc, current, index) => {
-          acc[index] = current.features;
-          return acc;
-        }, {} as OpenedPolygons);
-        console.log("initialPolygons", initialPolygons);
-
-        setOpenedPolygons(() => ({ ...initialPolygons }));
       });
+      const initialPolygons = solutions.reduce((acc, current, index) => {
+        acc[index] = current.features;
+        return acc;
+      }, {} as OpenedPolygons);
+      console.log("initialPolygons", initialPolygons);
 
-      mapRef.current.on('draw.selectionchange', ({ features }: { features: Feature<Polygon | MultiPolygon>[] }) => {
-        // When features are selected pick the polygons from them and update parent.
-        // This is required before we can manipulate polygons or show statistics about them.
-        const polygonsOnly = features.filter(feature => feature.geometry.type === 'Polygon');
-        onPolygonsSelect(polygonsOnly);
-      });
+      setOpenedPolygons(() => ({ ...initialPolygons }));
+    });
 
-      mapRef.current.once('draw.update', onPolygonUpdate);
-      mapRef.current.once('draw.create', onPolygonCreate);
-      mapRef.current.once('draw.delete', onPolygonDelete);
-    }
-  }, [
-    apiKey,
-    mapContainerRef,
-    mapRef,
-    polygons,
-    surfaceStudioControl,
-    onPolygonCreate,
-    onPolygonDelete,
-    onPolygonUpdate,
-    generateFeatureId,
-  ])
+    mapRef.current.on('draw.selectionchange', ({ features }: { features: Feature<Polygon | MultiPolygon>[] }) => {
+      // When features are selected pick the polygons from them and update parent.
+      // This is required before we can manipulate polygons or show statistics about them.
+      const polygonsOnly = features.filter(feature => feature.geometry.type === 'Polygon');
+      onPolygonsSelect(polygonsOnly);
+    });
+
+    mapRef.current.once('draw.update', onPolygonUpdate);
+    mapRef.current.once('draw.create', onPolygonCreate);
+    mapRef.current.once('draw.delete', onPolygonDelete);
+  }
 
   // Whenever polygons changes or solution changes, re-draw and update event listeners
   useEffect(() => {
@@ -261,7 +249,7 @@ export const Map = ({ activeSolutionIndex, apiKey, polygons, selectedPolygons, s
     onPolygonUnion,
   ])
 
-  // Used to set an opened and modified solution to dirty to determine whether to render the default polygons or the ongoing modifications
+  // Used to set a opened and modified solution to dirty to determine whether to render the default polygons or the ongoing modifications
   useEffect(() => {
     if (openedPolygons[activeSolutionIndex]) setDirtySolutionsIndexes([...new Set([...dirtySolutionsIndexes, activeSolutionIndex])]);
   }, [activeSolutionIndex, openedPolygons])
