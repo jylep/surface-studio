@@ -163,12 +163,11 @@ export const Map = ({ activeSolutionIndex, apiKey, polygons, selectedPolygons, s
           id: generateFeatureId(activeSolutionIndex, index)
         });
       });
+
       const initialPolygons = solutions.reduce((acc, current, index) => {
         acc[index] = current.features;
         return acc;
       }, {} as OpenedPolygons);
-      console.log("initialPolygons", initialPolygons);
-
       setOpenedPolygons(() => ({ ...initialPolygons }));
     });
 
