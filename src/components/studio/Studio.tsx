@@ -1,5 +1,5 @@
 import React, { useEffect, useState } from 'react';
-import { Feature, FeatureCollection, Polygon } from 'geojson';
+import { Feature, FeatureCollection, MultiPolygon, Polygon } from 'geojson';
 
 import { Map } from './Solution/Map';
 import { Sideview } from './Solution/Sideview';
@@ -14,16 +14,16 @@ import './Studio.css';
 export const Studio = () => {
   const mapboxApiKey = useConfig("MAPBOX_API_KEY");
 
-  const [solutions, setSolutions] = useState<FeatureCollection<Polygon>[]>([]);
+  const [solutions, setSolutions] = useState<FeatureCollection<Polygon | MultiPolygon>[]>([]);
   const [activeSolutionIndex, setActiveSolutionIndex] = useState<number>(0);
-  const [selectedPolygons, setSelectedPolygons] = useState<Feature<Polygon>[]>([]);
+  const [selectedPolygons, setSelectedPolygons] = useState<Feature<Polygon | MultiPolygon>[]>([]);
 
   useEffect(() => {
     if (!solutions || solutions.length === 0) {
       // use setTimeout to simulate API request
       setTimeout(() => {
         // Typecasting here because json literals are translated to string type.
-        setSolutions(() => [solutionOne, solutionTwo] as FeatureCollection<Polygon>[]);
+        setSolutions(() => [solutionOne, solutionTwo] as FeatureCollection<Polygon | MultiPolygon>[]);
       }, 800);
     }
   }, [solutions])
@@ -32,7 +32,7 @@ export const Studio = () => {
     setActiveSolutionIndex(() => solutionIndex);
   }
 
-  const onPolygonsSelect = (features: Feature<Polygon>[]) => {
+  const onPolygonsSelect = (features: Feature<Polygon | MultiPolygon>[]) => {
     setSelectedPolygons(() => features);
   }
 
@@ -44,11 +44,12 @@ export const Studio = () => {
           activeSolutionIndex={activeSolutionIndex}
           apiKey={mapboxApiKey.asString()}
           polygons={solutions[activeSolutionIndex]?.features || []}
+          selectedPolygons={selectedPolygons}
           solutions={solutions}
           onPolygonsSelect={onPolygonsSelect}>
         </Map>
       )}
-      <Sideview selectedPolygons={selectedPolygons}/>
+      <Sideview selectedPolygons={selectedPolygons} />
     </div>
   )
 }

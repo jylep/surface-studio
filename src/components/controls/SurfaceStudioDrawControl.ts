@@ -1,11 +1,14 @@
 import { IControl, Map } from "mapbox-gl";
 
 type SurfaceStudioButtonDefinition = {
-  on: string,
-  title: string,
-  action: () => void,
-  iconClassName?: string, // a font-awesome icon
-  element?: HTMLButtonElement
+  color: string;
+  disabled: boolean;
+  iconClassName?: string; // a font-awesome icon
+  id: string;
+  element?: HTMLButtonElement;
+  on: string;
+  title: string;
+  action: () => void;
 }
 
 /**
@@ -56,11 +59,13 @@ export class SurfaceStudioDrawControl implements IControl {
     newButton.className = 'mapbox-gl-draw_ctrl-draw-btn';
     if (buttonDefinition.iconClassName) buttonDefinition.iconClassName.split(' ').forEach(className => newButton.classList.add(className))
     newButton.addEventListener(buttonDefinition.on, buttonDefinition.action);
-    newButton.type = "button";
+    newButton.id = buttonDefinition.id;
     newButton.title = buttonDefinition.title;
-    newButton.style.color = "black"; // Hardcoded for ease
-    if (this.controlContainer) this.controlContainer.appendChild(newButton);
-    buttonDefinition.element = newButton;
+    newButton.type = "button";
+    newButton.disabled = buttonDefinition.disabled; // for those two cases we can set every button to disabled as a starting point
+    newButton.style.color = buttonDefinition.color;
+    if (this.controlContainer) buttonDefinition.element = this.controlContainer.appendChild(newButton);
+    // buttonDefinition.element = newButton;
   }
 
   removeButton(buttonDefinition: SurfaceStudioButtonDefinition): void {

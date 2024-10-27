@@ -1,12 +1,12 @@
 import React from 'react';
 
 import './Solutions.css';
-import { FeatureCollection, Polygon } from 'geojson';
+import { FeatureCollection, MultiPolygon, Polygon } from 'geojson';
 
 
 type SolutionsProps = {
   activeSolutionIndex: number;
-  solutions: FeatureCollection<Polygon>[];
+  solutions: FeatureCollection<Polygon | MultiPolygon>[];
   onSolutionSelect: (solutionIndex: number) => void;
 }
 export const Solutions = ({ solutions, activeSolutionIndex, onSolutionSelect }: SolutionsProps) => {

@@ -1,11 +1,11 @@
 import React from 'react';
 
 import './Sideview.css';
-import { Feature, Polygon } from 'geojson';
+import { Feature, MultiPolygon, Polygon } from 'geojson';
 import { area } from '@turf/turf';
 
 type SideViewProps = {
-  selectedPolygons: Feature<Polygon>[]
+  selectedPolygons: Feature<Polygon | MultiPolygon>[]
 }
 export const Sideview = ({selectedPolygons}: SideViewProps) => {
 
