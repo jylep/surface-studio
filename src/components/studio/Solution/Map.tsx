@@ -181,7 +181,7 @@ export const Map = ({ activeSolutionIndex, apiKey, polygons, selectedPolygons, s
     mapRef.current = new MapboxMap({
       container: mapContainerRef.current,
       center: [2.297, 48.857],
-      zoom: 15,
+      zoom: 16,
       style: 'mapbox://styles/jlepoix/cm1wl1l2g00u901plfw864gag'
     });
     mapRef.current.addControl(surfaceStudioControl.current);
@@ -263,7 +263,7 @@ export const Map = ({ activeSolutionIndex, apiKey, polygons, selectedPolygons, s
       mapRef.current.once('draw.delete', onPolygonDelete);
 
       surfaceStudioControl.current.buttons.forEach((buttonDefinition) => {
-        buttonDefinition.action = buttonDefinition.id === "union" ? onPolygonUnion: onPolygonIntersect; // Updated useCallback
+        buttonDefinition.action = buttonDefinition.id === "union" ? onPolygonUnion : onPolygonIntersect; // Updated useCallback
         buttonDefinition.color = selectedPolygons.length >= 2 ? "black" : "grey";
         buttonDefinition.disabled = selectedPolygons.length < 2;
         surfaceStudioControl.current.removeButton(buttonDefinition);
@@ -284,7 +284,8 @@ export const Map = ({ activeSolutionIndex, apiKey, polygons, selectedPolygons, s
   // Used to set a opened and modified solution to dirty to determine whether to render the default polygons or the ongoing modifications
   useEffect(() => {
     if (openedPolygons[activeSolutionIndex]) setDirtySolutionsIndexes([...new Set([...dirtySolutionsIndexes, activeSolutionIndex])]);
-  }, [activeSolutionIndex, openedPolygons])
+    else if (solutions && solutions[activeSolutionIndex]) setOpenedPolygons({ ...openedPolygons, [activeSolutionIndex]: [...solutions[activeSolutionIndex].features] })
+  }, [activeSolutionIndex, openedPolygons, solutions])
 
   return (
     <div id="map" ref={mapContainerRef}></div>
