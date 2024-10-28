@@ -206,7 +206,7 @@ export const Map = ({ activeSolutionIndex, apiKey, polygons, selectedPolygons, s
     mapRef.current.on('draw.selectionchange', ({ features }: { features: Feature<Polygon | MultiPolygon>[] }) => {
       // When features are selected pick the polygons from them and update parent.
       // This is required before we can manipulate polygons or show statistics about them.
-      const polygonsOnly = features.filter(feature => feature.geometry.type === 'Polygon');
+      const polygonsOnly = features.filter(feature => feature.geometry.type === 'Polygon' || feature.geometry.type === "MultiPolygon");
       onPolygonsSelect(polygonsOnly);
     });
 
