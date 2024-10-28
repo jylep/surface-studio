@@ -9,7 +9,7 @@ import { SurfaceStudioDrawControl } from '../../controls/SurfaceStudioDrawContro
 import './Map.css';
 import 'mapbox-gl/dist/mapbox-gl.css';
 import '@mapbox/mapbox-gl-draw/dist/mapbox-gl-draw.css';
-import { featureCollection, union } from '@turf/turf';
+import { featureCollection, intersect, union } from '@turf/turf';
 
 type OpenedPolygons = Record<number | string, Feature<Polygon | MultiPolygon>[]>;
 type MapProps = {
@@ -88,7 +88,7 @@ export const Map = ({ activeSolutionIndex, apiKey, polygons, selectedPolygons, s
   }, [activeSolutionIndex, isDirty, openedPolygons, polygons]);
 
   const onPolygonUnion = useCallback(() => {
-    const newPolygons = [...(activeSolutionPolygons ?? [])];
+    const newPolygons = [...(isDirty ? activeSolutionPolygons : polygons)];
     const unionPolygon = union(featureCollection(selectedPolygons));
 
     if (unionPolygon !== null) {
@@ -117,6 +117,38 @@ export const Map = ({ activeSolutionIndex, apiKey, polygons, selectedPolygons, s
     generateFeatureId,
     onPolygonCreate,
     union,
+  ]);
+
+  const onPolygonIntersect = useCallback(() => {
+    const newPolygons = [...(isDirty ? activeSolutionPolygons : polygons)];
+    const intersectPolygon = intersect(featureCollection(selectedPolygons));
+
+    if (intersectPolygon !== null) {
+      // Remove polygons used to create the intersection
+      const polygonIdsToRemove = selectedPolygons.map(feature => Number(String(feature.id!).split('-').pop()));
+      polygonIdsToRemove.sort().reverse();
+      polygonIdsToRemove.forEach(id => newPolygons.splice(id, 1));
+
+      // Add the new polygon
+      newPolygons.push({
+        ...intersectPolygon,
+        id: generateFeatureId(activeSolutionIndex, newPolygons.length),
+      });
+
+      setOpenedPolygons(prevPolygons => ({
+        ...prevPolygons,
+        [activeSolutionIndex]: newPolygons
+      }));
+    }
+  }, [
+    activeSolutionIndex,
+    activeSolutionPolygons,
+    isDirty,
+    polygons,
+    selectedPolygons,
+    intersect,
+    featureCollection,
+    generateFeatureId
   ]);
 
   const surfaceStudioControl = useRef<SurfaceStudioDrawControl>(new SurfaceStudioDrawControl({
@@ -231,7 +263,7 @@ export const Map = ({ activeSolutionIndex, apiKey, polygons, selectedPolygons, s
       mapRef.current.once('draw.delete', onPolygonDelete);
 
       surfaceStudioControl.current.buttons.forEach((buttonDefinition) => {
-        buttonDefinition.action = onPolygonUnion; // Updated useCallback
+        buttonDefinition.action = buttonDefinition.id === "union" ? onPolygonUnion: onPolygonIntersect; // Updated useCallback
         buttonDefinition.color = selectedPolygons.length >= 2 ? "black" : "grey";
         buttonDefinition.disabled = selectedPolygons.length < 2;
         surfaceStudioControl.current.removeButton(buttonDefinition);
@@ -245,6 +277,7 @@ export const Map = ({ activeSolutionIndex, apiKey, polygons, selectedPolygons, s
     selectedPolygons,
     onPolygonCreate,
     onPolygonDelete,
+    onPolygonIntersect,
     onPolygonUnion,
   ])
 
